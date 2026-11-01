@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CapsuleCollider2D))]
@@ -6,6 +7,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : Entity
 {
+    [Header("Input Actions References")]
+    [SerializeField] private InputActionReference moveAction;
+    [SerializeField] private InputActionReference shootAction;
+    [SerializeField] private InputActionReference pauseAction;
+
     [Header("Movement Setting")]
     [SerializeField] private float speed = 15.0f;
     private float moveInput;
@@ -31,14 +37,52 @@ public class PlayerController : Entity
         bulletPool = new ObjectPool<BulletController>(bulletPrefab, bulletPoolSize, bulletContainer);
     }
 
-    private void OnEnable() => EventBus.Subscribe<GamePausedEvent>(OnGamePaused);
+    private void OnEnable()
+    {
+        if (moveAction != null)
+        {
+            moveAction.action.Enable();
+        }
 
-    private void OnDisable() => EventBus.Unsubscribe<GamePausedEvent>(OnGamePaused);
+        if (shootAction != null)
+        {
+            shootAction.action.Enable();
+            shootAction.action.performed += OnShootInput;
+        }
+
+        if (pauseAction != null)
+        {
+            pauseAction.action.Enable();
+            pauseAction.action.performed += OnPauseInput;
+        }
+
+        EventBus.Subscribe<GamePausedEvent>(OnGamePaused);
+    }
+
+    private void OnDisable()
+    {
+        if (moveAction != null)
+        {
+            moveAction.action.Disable();
+        }
+
+        if (shootAction != null)
+        {
+            shootAction.action.performed -= OnShootInput;
+            shootAction.action.Disable();
+        }
+
+        if (pauseAction != null)
+        {
+            pauseAction.action.performed -= OnPauseInput;
+            pauseAction.action.Disable();
+        }
+
+        EventBus.Unsubscribe<GamePausedEvent>(OnGamePaused);
+    }
 
     private void Update()
     {   
-        ReadPauseInput();
-
         if (canPlay)
         {
             ReadGameplayInput();
@@ -54,21 +98,22 @@ public class PlayerController : Entity
         }
     }
 
-    private void ReadPauseInput()
+    private void OnPauseInput(InputAction.CallbackContext context)
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            EventBus.Publish(new PauseRequestedEvent());
-        }
+        EventBus.Publish(new PauseRequestedEvent());
     }
 
     private void ReadGameplayInput()
     {
-        // MOVEMENT
-        moveInput = Input.GetAxisRaw("Horizontal");
+        if (moveAction != null)
+        {
+            moveInput = moveAction.action.ReadValue<Vector2>().x;
+        }
+    }
 
-        // SHOOT
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && CanFire())
+    private void OnShootInput(InputAction.CallbackContext context)
+    {
+        if (canPlay && CanFire())
         {
             Shoot();
         }
