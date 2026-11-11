@@ -268,7 +268,7 @@ MonoBehaviour:
   moveAction: {fileID: -1680190386980627800, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   shootAction: {fileID: 1120369429361536294, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   pauseAction: {fileID: -1615407275068408058, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  speed: 15
+  speed: 10
   bulletPoolSize: 10
   fireCooldown: 0.1
   bulletPrefab: {fileID: 1492766579070078295, guid: a09155a8c02428044a4ff6b79de4f455, type: 3}

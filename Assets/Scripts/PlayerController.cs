@@ -13,7 +13,7 @@ public class PlayerController : Entity
     [SerializeField] private InputActionReference pauseAction;
 
     [Header("Movement Setting")]
-    [SerializeField] private float speed = 15.0f;
+    [SerializeField] private float speed = 10.0f;
     private float moveInput;
     private bool canPlay = true;
 
