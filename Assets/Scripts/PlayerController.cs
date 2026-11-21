@@ -124,8 +124,13 @@ public class PlayerController : Entity
         Vector3 newPosition = transform.position;
         newPosition.x += moveInput * speed * Time.deltaTime;
 
+#if UNITY_ANDROID
+        float leftLimit = MainCamera.GetSafeLeftEdge() + HalfWidth;
+        float rightLimit = MainCamera.GetSafeRightEdge() - HalfWidth;
+#else
         float leftLimit = MainCamera.GetLeftEdge() + HalfWidth;
         float rightLimit = MainCamera.GetRightEdge() - HalfWidth;
+#endif
 
         newPosition.x = Mathf.Clamp(newPosition.x, leftLimit, rightLimit);
         transform.position = newPosition;
