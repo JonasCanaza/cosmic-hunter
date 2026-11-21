@@ -49,8 +49,13 @@ public class AsteroidSpawner : MonoBehaviour
 
     private float GetRandomScreenPositionX(float asteroidHalfWidth)
     {
+#if UNITY_ANDROID
+        float left = mainCamera.GetSafeLeftEdge() + asteroidHalfWidth;
+        float right = mainCamera.GetSafeRightEdge() - asteroidHalfWidth;
+#else
         float left = mainCamera.GetLeftEdge() + asteroidHalfWidth;
         float right = mainCamera.GetRightEdge() - asteroidHalfWidth;
+#endif
 
         return Random.Range(left, right);
     }
