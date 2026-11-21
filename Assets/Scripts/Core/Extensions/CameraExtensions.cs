@@ -18,6 +18,14 @@ public static class CameraExtensions
 
     public static float GetBottomEdge(this Camera camera) => camera.GetPositionY() - camera.orthographicSize;
 
+    public static float GetSafeLeftEdge(this Camera camera) => camera.ScreenToWorldPoint(new Vector3(Screen.safeArea.xMin, 0f, 0f)).x;
+
+    public static float GetSafeRightEdge(this Camera camera) => camera.ScreenToWorldPoint(new Vector3(Screen.safeArea.xMax, 0f, 0f)).x;
+
+    public static float GetSafeTopEdge(this Camera camera) => camera.ScreenToWorldPoint(new Vector3(0f, Screen.safeArea.yMax, 0f)).y;
+
+    public static float GetSafeBottomEdge(this Camera camera) => camera.ScreenToWorldPoint(new Vector3(0f, Screen.safeArea.yMin, 0f)).y;
+
     public static bool IsBeyondLeftEdge(this Camera camera, float positionX, float offset = 0.0f) => positionX < camera.GetLeftEdge() - offset;
 
     public static bool IsBeyondRightEdge(this Camera camera, float positionX, float offset = 0.0f) => positionX > camera.GetRightEdge() + offset;
